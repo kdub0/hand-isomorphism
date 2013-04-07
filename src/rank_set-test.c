@@ -69,6 +69,14 @@ TEST(rank_set_add) {
   expect(rank_set_add(1, 2) == 5);
 }
 
+TEST(rank_set_remove) {
+  expect(rank_set_remove(1, 0) == 0);
+  expect(rank_set_remove(3, 0) == 2);
+  expect(rank_set_remove(7, 1) == 5);
+  expect(rank_set_remove(7, 2) == 3);
+  expect(rank_set_remove(7, 0) == 6);
+}
+
 TEST(rank_set_set) {
   expect(rank_set_set(0, 0) == 1);
   expect(rank_set_set(0, 1) == 2);
