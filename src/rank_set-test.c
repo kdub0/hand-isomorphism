@@ -28,3 +28,8 @@ TEST(rank_set_is_singleton) {
   expect(rank_set_is_singleton(2));
 }
 
+TEST(rank_set_from_rank) {
+  for(card_t i=0; i<RANKS; ++i) {
+    expect(rank_set_from_rank(i) == 1u<<i);
+  }
+}
