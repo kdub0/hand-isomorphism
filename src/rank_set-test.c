@@ -115,3 +115,11 @@ TEST(rank_set_first) {
     expect(rank_set_first(rank_set_union(rank_set_from_rank(i+1), rank_set_from_rank(i))) == i);
   }
 }
+
+TEST(rank_set_next) {
+  for(card_t i=0; i<RANKS-1; ++i) {
+    rank_set_t set = rank_set_union(rank_set_from_rank(i+1), rank_set_from_rank(i));
+    expect(rank_set_next(&set) == i); require(!rank_set_empty(set));
+    expect(rank_set_next(&set) == i+1); expect(rank_set_empty(set));
+  }
+}
