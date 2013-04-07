@@ -144,7 +144,8 @@ static inline card_t rank_from_rank_set(rank_set_t set) {
   assert(rank_set_is_singleton(set));
   return !!(set & 0xaaaa)    |
          !!(set & 0xcccc)<<1 |
-	 !!(set & 0xf0f0)<<2;
+	 !!(set & 0xf0f0)<<2 |
+	 !!(set & 0xff00)<<3;
 }
 
 /**
