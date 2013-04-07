@@ -20,3 +20,11 @@ TEST(rank_set_empty) {
     expect(!rank_set_empty(i));
   }
 }
+
+TEST(rank_set_is_singleton) {
+  expect(!rank_set_is_singleton(0));
+  expect(!rank_set_is_singleton(3));
+  expect(rank_set_is_singleton(1));
+  expect(rank_set_is_singleton(2));
+}
+
