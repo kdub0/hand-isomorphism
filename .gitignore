@@ -1,0 +1,5 @@
+*~
+src/*.o
+src/check
+index_flop
+unindex_flop
