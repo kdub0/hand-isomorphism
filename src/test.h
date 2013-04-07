@@ -65,7 +65,7 @@ typedef struct test_s {
  */
 #define require(p) \
   if (!(p)) { \
-    fprintf(stderr, "%s:%d: Expectation failed `%s'.\n", __FILE__, __LINE__, TEXT(p)); \
+    fprintf(stderr, "%s:%d: Requirement failed `%s'.\n", __FILE__, __LINE__, TEXT(p)); \
     ++(*__fail); return; \
   } else { \
     ++(*__pass); \
