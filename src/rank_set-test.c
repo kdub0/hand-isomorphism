@@ -39,3 +39,9 @@ TEST(rank_from_rank_set) {
     expect(rank_from_rank_set(rank_set_from_rank(i)) == i);
   }
 }
+
+TEST(rank_set_intersect) {
+  expect(rank_set_intersect(1, 3) == 1);
+  expect(rank_set_intersect(1, 2) == 0);
+  expect(rank_set_intersect(7, 3) == 3);
+}
