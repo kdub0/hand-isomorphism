@@ -255,7 +255,7 @@ static inline rank_set_t rank_set_toggle(rank_set_t set, card_t rank) {
  */
 static inline card_t rank_set_first(rank_set_t set) {
   assert(!rank_set_empty(set));
-  return rank_from_rank_set(set&(set-1));
+  return rank_from_rank_set(set&~(set-1));
 }
 
 /**
@@ -265,7 +265,7 @@ static inline card_t rank_set_first(rank_set_t set) {
  * @note set must be valid and non-empty
  */
 static inline card_t rank_set_next(rank_set_t * set) {
-  rank_set_t first_set = (*set) & ((*set) - 1);
+  rank_set_t first_set = (*set) & ~((*set) - 1);
   *set = rank_set_subtract(*set, first_set);
   return rank_from_rank_set(first_set);
 }
