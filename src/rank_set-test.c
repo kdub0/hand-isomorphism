@@ -109,3 +109,9 @@ TEST(rank_set_toggle) {
   expect(rank_set_toggle(5, 1) == 7);
 }
 
+TEST(rank_set_first) {
+  for(card_t i=0; i<RANKS-1; ++i) {
+    expect(rank_set_first(rank_set_from_rank(i)) == i);
+    expect(rank_set_first(rank_set_union(rank_set_from_rank(i+1), rank_set_from_rank(i))) == i);
+  }
+}
