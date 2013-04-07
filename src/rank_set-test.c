@@ -79,6 +79,17 @@ TEST(rank_set_to_card_array) {
   expect(cards[1] == 5);
 }
 
+TEST(rank_set_index_size) {
+  expect(rank_set_index_size(2, 0) == 78);
+  expect(rank_set_index_size(2, 1) == 66);
+  expect(rank_set_index_size(2, 2) == 66);
+  expect(rank_set_index_size(2, 3) == 55);
+  expect(rank_set_index_size(3, 0) == 286);
+  expect(rank_set_index_size(3, 1) == 220);
+  expect(rank_set_index_size(3, 2) == 220);
+  expect(rank_set_index_size(3, 3) == 165);
+}
+
 TEST(rank_set_valid) {
   for(rank_set_t i=0; i<(1u<<RANKS); ++i) {
     expect(rank_set_valid(i));
