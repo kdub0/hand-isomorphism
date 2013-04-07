@@ -33,3 +33,9 @@ TEST(rank_set_from_rank) {
     expect(rank_set_from_rank(i) == 1u<<i);
   }
 }
+
+TEST(rank_from_rank_set) {
+  for(card_t i=0; i<RANKS; ++i) {
+    expect(rank_from_rank_set(rank_set_from_rank(i)) == i);
+  }
+}
