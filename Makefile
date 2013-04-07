@@ -8,10 +8,10 @@
 
 CFLAGS   ?=-std=c99 -Wall -g -O2
 
-SRC      :=$(addprefix src/,card_set.c)
+SRC      :=$(addprefix src/,rank_set.c)
 OBJ      :=$(SRC:.c=.o)
 
-TEST_SRC :=$(addprefix src/,card_set-test.c test.c)
+TEST_SRC :=$(addprefix src/,rank_set-test.c test.c)
 TEST_OBJ :=$(TEST_SRC:.c=.o)
 
 .PHONY: all clean check
@@ -34,7 +34,7 @@ unindex_flop: src/unindex_flop-main.o $(OBJ)
 src/check index_flop unindex_flop:
 	$(CC) $(LDFLAGS) -o $@ $^ $(LOADLIBES) $(LDLIBS)
 
-src/card_set.o src/card_set-test.o: src/card_set.h src/deck.h
+src/rank_set.o src/rank_set-test.o: src/rank_set.h src/deck.h
 src/check-main.c: src/test.h
 
 $(TEST_SRC): src/test.h
