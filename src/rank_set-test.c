@@ -3,8 +3,17 @@
 
 TEST(rank_set_size) {
   expect(rank_set_size(EMPTY_RANK_SET) == 0);
-  expect(rank_set_from_rank(0) == 1);
-  expect(rank_set_from_rank_array(3, (card_t[]){0,1,2}) == 3);
+  expect(rank_set_size(rank_set_from_rank(1)) == 1);
+  expect(rank_set_size(rank_set_from_rank_array(3, (card_t[]){0,1,2})) == 3);
+}
+
+TEST(rank_set_from_rank_array) {
+  expect(rank_set_from_rank_array(0, (card_t[]){}) == 0);
+  expect(rank_set_from_rank_array(1, (card_t[]){0}) == 1);
+  expect(rank_set_from_rank_array(2, (card_t[]){1,0}) == 3);
+  expect(rank_set_from_rank_array(3, (card_t[]){2,1,0}) == 7);
+  expect(rank_set_from_rank_array(1, (card_t[]){RANKS}) == INVALID_RANK_SET);
+  expect(rank_set_from_rank_array(2, (card_t[]){1,1}) == INVALID_RANK_SET);
 }
 
 TEST(rank_set_valid) {
