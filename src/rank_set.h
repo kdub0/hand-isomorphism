@@ -6,8 +6,8 @@
  *
  * index and unindex sets of ranks.
  */
-#ifndef _CARD_SET_H_
-#define _CARD_SET_H_
+#ifndef _RANK_SET_H_
+#define _RANK_SET_H_
 
 #include <assert.h>
 #include <inttypes.h>
@@ -19,15 +19,15 @@ typedef uint_fast16_t rank_set_t;
 #define PRIrank_set             PRIuFAST16
 #define SCNrank_set             SCNuFAST16
 
-#define EMPTY_CARD_SET          0
-#define INVALID_CARD_SET        UINT_FAST16_MAX
+#define EMPTY_RANK_SET          0
+#define INVALID_RANK_SET        UINT_FAST16_MAX
 
 typedef uint64_t rank_set_index_t;
 
 #define PRIrank_set_index       PRIu64
 #define SCNrank_set_index       SCNu64
 
-#define INVALID_CARD_SET_INDEX  UINT64_MAX
+#define INVALID_RANK_SET_INDEX  UINT64_MAX
 
 /**
  * @param set rank set
@@ -38,7 +38,7 @@ size_t rank_set_size(rank_set_t set);
 /**
  * @param n length of ranks
  * @param ranks rank array
- * @returns a rank set from an array of ranks, INVALID_CARD_SET if duplicates are detected
+ * @returns a rank set from an array of ranks, INVALID_RANK_SET if duplicates are detected
  */
 rank_set_t rank_set_from_rank_array(size_t n, const card_t ranks[]);
 
@@ -46,7 +46,7 @@ rank_set_t rank_set_from_rank_array(size_t n, const card_t ranks[]);
  * @param n length of cards
  * @param cards card array
  * @param suit suit to extract
- * @returns a rank set, INVALID_CARD_SET if duplicates are detected
+ * @returns a rank set, INVALID_RANK_SET if duplicates are detected
  */
 rank_set_t rank_set_from_card_array(size_t n, const card_t cards[], card_t suit);
 
@@ -84,7 +84,7 @@ _Bool rank_set_index_valid(size_t m, rank_set_index_t index, rank_set_t used);
  * @param set set to index
  * @param used ranks that are unavailable
  * @returns index of rank set between [0,rank_set_index_size(rank_set_size(set),used)), or
- * INVALID_CARD_SET_INDEX if not possible
+ * INVALID_RANK_SET_INDEX if not possible
  */
 rank_set_index_t rank_set_index(rank_set_t set, rank_set_t used);
 
@@ -92,7 +92,7 @@ rank_set_index_t rank_set_index(rank_set_t set, rank_set_t used);
  * @param m size of set to be unindexed
  * @param index index of rank set 
  * @param used ranks that are unavailable
- * @returns rank set represented by index, or INVALID_CARD_SET if index is invalid, or
+ * @returns rank set represented by index, or INVALID_RANK_SET if index is invalid, or
  * m + rank_set_size(used) > RANKS
  */
 rank_set_t rank_set_unindex(size_t m, rank_set_index_t index, rank_set_t used);
@@ -102,7 +102,7 @@ rank_set_t rank_set_unindex(size_t m, rank_set_index_t index, rank_set_t used);
  * @returns true if rank set is valid
  */
 static inline _Bool rank_set_valid(rank_set_t set) {
-  return set != INVALID_CARD_SET;
+  return set != INVALID_RANK_SET;
 }
 
 /**
@@ -112,7 +112,7 @@ static inline _Bool rank_set_valid(rank_set_t set) {
  */
 static inline _Bool rank_set_empty(rank_set_t set) {
   assert(rank_set_valid(set));
-  return set == EMPTY_CARD_SET;
+  return set == EMPTY_RANK_SET;
 }
 
 /**
