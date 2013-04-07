@@ -8,6 +8,9 @@
 
 CFLAGS ?=-std=c99 -Wall -g -O2
 
+SRC     =card_set.c
+OBJ     =$(addprefix src/,$(SRC:.c=.o))
+
 .PHONY: all clean check
 
 all: index_flop unindex_flop
@@ -18,11 +21,13 @@ clean:
 check: src/check
 	./src/check
 
-src/check: src/check-main.o
+src/check: src/check-main.o $(OBJ)
 
-index_flop: src/index_flop-main.o
+index_flop: src/index_flop-main.o $(OBJ)
 
-unindex_flop: src/unindex_flop-main.o
+unindex_flop: src/unindex_flop-main.o $(OBJ)
 
 src/check index_flop unindex_flop:
 	$(CC) $(LDFLAGS) -o $@ $^ $(LOADLIBES) $(LDLIBS)
+
+src/card_set.o: src/card_set.h src/deck.h
