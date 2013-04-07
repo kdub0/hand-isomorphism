@@ -60,3 +60,11 @@ TEST(rank_set_is_set) {
   expect(rank_set_is_set(2, 1));
   expect(rank_set_is_set(3, 1));
 }
+
+TEST(rank_set_add) {
+  expect(rank_set_add(0, 0) == 1);
+  expect(rank_set_add(0, 1) == 2);
+  expect(rank_set_add(2, 0) == 3);
+  expect(rank_set_add(3, 3) == 7);
+  expect(rank_set_add(1, 3) == 1);
+}
