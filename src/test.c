@@ -4,18 +4,21 @@
 static test_t * root = 0;
 
 int test_run_all() {
-  int failures = 0;
+  int passes = 0, failures = 0;
   for(test_t * test=root; test; test=test->next) {
-    printf("running %s...\n", test->name);
 
     int pass = 0, fail = 0; test->run(&pass, &fail);
     int total = pass + fail + !(pass+fail);
-    printf("  %d/%d (%0.2lf%%)\n", pass, total, 100.0*pass/total);
+    printf("%s %d/%d (%0.2lf%%)\n", test->name, pass, total, 100.0*pass/total);
 
     if (fail > 0) {
       ++failures;
+    } else {
+      ++passes;
     }
   }
+  printf("OVERALL %d/%d (%0.2lf%%)\n", passes, passes+failures, 
+         100.0*passes/(passes+failures+!(passes+failures)));
   return failures;
 }
 
