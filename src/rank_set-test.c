@@ -45,3 +45,9 @@ TEST(rank_set_intersect) {
   expect(rank_set_intersect(1, 2) == 0);
   expect(rank_set_intersect(7, 3) == 3);
 }
+
+TEST(rank_set_union) {
+  expect(rank_set_union(1, 3) == 3);
+  expect(rank_set_union(1, 2) == 3);
+  expect(rank_set_union(7, 3) == 7);
+}
