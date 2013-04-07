@@ -35,6 +35,23 @@ TEST(rank_set_from_card_array) {
   expect(rank_set_from_card_array(3, (card_t[]){5,5,0}, 0) == 1);
 }
 
+TEST(rank_set_to_rank_array) {
+  card_t ranks[3];
+
+  expect(!rank_set_to_rank_array(INVALID_RANK_SET, ranks));
+  require(rank_set_to_rank_array(0, ranks));
+
+  require(rank_set_to_rank_array(1, ranks));
+  expect(ranks[0] == 0);
+  
+  require(rank_set_to_rank_array(2, ranks));
+  expect(ranks[0] == 1);
+
+  require(rank_set_to_rank_array(3, ranks));
+  expect(ranks[0] == 0);
+  expect(ranks[1] == 1);
+}
+
 TEST(rank_set_valid) {
   for(rank_set_t i=0; i<(1u<<RANKS); ++i) {
     expect(rank_set_valid(i));

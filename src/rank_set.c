@@ -59,7 +59,7 @@ bool rank_set_to_rank_array(rank_set_t set, card_t ranks[]) {
     }
     return true;
   }
-  return INVALID_RANK_SET;
+  return false;
 }
 
 bool rank_set_to_card_array(rank_set_t set, card_t cards[], card_t suit) {
@@ -69,7 +69,7 @@ bool rank_set_to_card_array(rank_set_t set, card_t cards[], card_t suit) {
     }
     return true;
   }
-  return INVALID_RANK_SET;
+  return false;
 }
 
 bool rank_set_index_valid(size_t m, rank_set_index_t index, rank_set_t used) {
