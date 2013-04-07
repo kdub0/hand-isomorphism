@@ -178,6 +178,28 @@ TEST(rank_set_index_all) {
   free(index_to_set);
 }
 
+TEST(rank_set_unindex_all_available) {
+  size_t sets = 1u<<RANKS;
+
+  for(rank_set_t set=0; set<sets; ++set) {
+    size_t m = rank_set_size(set);
+    require(set == rank_set_unindex(m, rank_set_index(set, 0), 0));
+  }
+}
+
+TEST(rank_set_unindex_all) {
+  size_t sets = 1u<<RANKS;
+
+  for(rank_set_t used=0; used<sets; ++used) {
+    for(rank_set_t set=0; set<sets; ++set) {
+      if (!rank_set_intersect(set, used)) {
+        size_t m = rank_set_size(set);
+        require(set == rank_set_unindex(m, rank_set_index(set, used), used));
+      }
+    }
+  }
+}
+
 TEST(rank_set_valid) {
   for(rank_set_t i=0; i<(1u<<RANKS); ++i) {
     expect(rank_set_valid(i));
