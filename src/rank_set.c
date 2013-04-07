@@ -65,7 +65,7 @@ bool rank_set_to_rank_array(rank_set_t set, card_t ranks[]) {
 bool rank_set_to_card_array(rank_set_t set, card_t cards[], card_t suit) {
   if (deck_valid_suit(suit) && rank_set_valid(set)) {
     for(size_t i=0; !rank_set_empty(set); ++i) {
-      cards[i] = deck_make_card(rank_set_next(&set), suit);
+      cards[i] = deck_make_card(suit, rank_set_next(&set));
     }
     return true;
   }

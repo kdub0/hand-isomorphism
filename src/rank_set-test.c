@@ -52,6 +52,33 @@ TEST(rank_set_to_rank_array) {
   expect(ranks[1] == 1);
 }
 
+TEST(rank_set_to_card_array) {
+  card_t cards[3];
+
+  expect(!rank_set_to_card_array(INVALID_RANK_SET, cards, 0));
+  require(rank_set_to_card_array(0, cards, 0));
+
+  require(rank_set_to_card_array(1, cards, 0));
+  expect(cards[0] == 0);
+  
+  require(rank_set_to_card_array(2, cards, 0));
+  expect(cards[0] == 4);
+
+  require(rank_set_to_card_array(3, cards, 0));
+  expect(cards[0] == 0);
+  expect(cards[1] == 4);
+
+  require(rank_set_to_card_array(1, cards, 1));
+  expect(cards[0] == 1);
+  
+  require(rank_set_to_card_array(2, cards, 1));
+  expect(cards[0] == 5);
+
+  require(rank_set_to_card_array(3, cards, 1));
+  expect(cards[0] == 1);
+  expect(cards[1] == 5);
+}
+
 TEST(rank_set_valid) {
   for(rank_set_t i=0; i<(1u<<RANKS); ++i) {
     expect(rank_set_valid(i));
