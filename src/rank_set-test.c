@@ -16,6 +16,25 @@ TEST(rank_set_from_rank_array) {
   expect(rank_set_from_rank_array(2, (card_t[]){1,1}) == INVALID_RANK_SET);
 }
 
+TEST(rank_set_from_card_array) {
+  expect(rank_set_from_card_array(0, (card_t[]){}, 0) == 0);
+  expect(rank_set_from_card_array(1, (card_t[]){0}, 0) == 1);
+  expect(rank_set_from_card_array(2, (card_t[]){4,0}, 0) == 3);
+  expect(rank_set_from_card_array(3, (card_t[]){8,4,0}, 0) == 7);
+  expect(rank_set_from_card_array(1, (card_t[]){CARDS}, 0) == INVALID_RANK_SET);
+  expect(rank_set_from_card_array(2, (card_t[]){4,4}, 0) == INVALID_RANK_SET);
+
+  expect(rank_set_from_card_array(0, (card_t[]){}, 1) == 0);
+  expect(rank_set_from_card_array(1, (card_t[]){0}, 1) == 0);
+  expect(rank_set_from_card_array(2, (card_t[]){4,0}, 1) == 0);
+  expect(rank_set_from_card_array(3, (card_t[]){8,4,0}, 1) == 0);
+  expect(rank_set_from_card_array(1, (card_t[]){CARDS}, 1) == INVALID_RANK_SET);
+  expect(rank_set_from_card_array(2, (card_t[]){4,4}, 1) == 0);
+
+  expect(rank_set_from_card_array(3, (card_t[]){0,5,1}, 1) == 3);
+  expect(rank_set_from_card_array(3, (card_t[]){5,5,0}, 0) == 1);
+}
+
 TEST(rank_set_valid) {
   for(rank_set_t i=0; i<(1u<<RANKS); ++i) {
     expect(rank_set_valid(i));
