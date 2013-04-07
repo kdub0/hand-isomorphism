@@ -1,6 +1,22 @@
 #include <stdbool.h>
 #include "card_set.h"
 
+/* FIXME: temporary */
+static inline size_t nCr(size_t n, size_t r) {
+  if (r <= n) { 
+    if (n-r < r) {
+      r = n-r;
+    }
+    size_t result = 1;
+    for(int i=0; i<r; ++i) {
+      result = result*(n-i)/(i+1);
+    }
+    return result;
+  } else {
+    return 0;
+  }
+}
+
 size_t card_set_size(card_set_t set) {
   return __builtin_popcount(set);  
 }
@@ -64,7 +80,7 @@ card_set_index_t card_set_index_size(size_t m, card_set_t used) {
   if (card_set_valid(used)) {
     size_t used_size = card_set_size(used);
     if (used_size+m <= RANKS) {
-      // return nCr(RANKS-used_size, m);
+      return nCr(RANKS-used_size, m);
     }
   }
   return INVALID_CARD_SET_INDEX;
@@ -72,12 +88,14 @@ card_set_index_t card_set_index_size(size_t m, card_set_t used) {
 
 card_set_index_t card_set_index(card_set_t set, card_set_t used) {
   if (card_set_valid(set) && card_set_valid(used) && card_set_intersect(set, used) == EMPTY_CARD_SET) {
+    /* FIXME: add the meat */
   }
   return INVALID_CARD_SET_INDEX;
 }
 
 card_set_t card_set_unindex(size_t m, card_set_index_t index, card_set_t used) {
   if (card_set_index_valid(m, index, used)) {
+    /* FIXME: add the meat */
   }
   return INVALID_CARD_SET;
 }
