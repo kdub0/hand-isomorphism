@@ -81,8 +81,21 @@ TEST(rank_set_set) {
   expect(rank_set_set(0, 0) == 1);
   expect(rank_set_set(0, 1) == 2);
   expect(rank_set_set(2, 0) == 3);
-  expect(rank_set_set(3, 3) == 7);
-  expect(rank_set_set(1, 3) == 5);
+  expect(rank_set_set(3, 2) == 7);
+  expect(rank_set_set(1, 2) == 5);
   expect(rank_set_set(1, 0) == 1);
-  expect(rank_set_set(3, 1) == 1);
+  expect(rank_set_set(3, 1) == 3);
 }
+
+TEST(rank_set_unset) {
+  expect(rank_set_unset(1, 0) == 0);
+  expect(rank_set_unset(3, 0) == 2);
+  expect(rank_set_unset(7, 1) == 5);
+  expect(rank_set_unset(7, 2) == 3);
+  expect(rank_set_unset(7, 0) == 6);
+  expect(rank_set_unset(0, 0) == 0);
+  expect(rank_set_unset(2, 0) == 2);
+  expect(rank_set_unset(5, 1) == 5);
+}
+
+
