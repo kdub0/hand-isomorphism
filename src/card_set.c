@@ -25,11 +25,13 @@ card_set_t card_set_from_card_array(size_t n, const card_t cards[], card_t suit)
     if (!deck_valid_card(cards[i])) {
       return INVALID_CARD_SET;
     }
-    card_t rank = deck_get_rank(cards[i]);
-    if (card_set_is_set(set, rank)) {
-      return INVALID_CARD_SET;
+    if (deck_get_suit(cards[i]) == suit) {
+      card_t rank = deck_get_rank(cards[i]);
+      if (card_set_is_set(set, rank)) {
+        return INVALID_CARD_SET;
+      }
+      set = card_set_add(set, rank);
     }
-    set = card_set_add(set, rank);
   }
   return set;
 }
