@@ -135,6 +135,49 @@ TEST(rank_set_index_all_available) {
   free(index_to_set);
 }
 
+TEST(rank_set_index_all) {
+  expect(rank_set_index(INVALID_RANK_SET, 0) == INVALID_RANK_SET_INDEX);
+  expect(rank_set_index(0, INVALID_RANK_SET) == INVALID_RANK_SET_INDEX);
+  
+  size_t sets = 1u<<RANKS;
+  rank_set_t * index_to_set = malloc(sets*sizeof(rank_set_t)); require(index_to_set);
+
+  /* loop over all unavailable sets */
+  for(rank_set_t used=0; used<sets; ++used) {
+    size_t used_size = rank_set_size(used);
+    
+    /* loop over all sets sizes */
+    for(size_t m=0; m<=RANKS-used_size; ++m) {
+      memset(index_to_set, 0xff, sets*sizeof(rank_set_t)); /* set to invalid */
+
+      rank_set_index_t size = rank_set_index_size(m, used), count = 0;
+      require(size <= sets);
+
+      /* loop over all sets, make sure no collisions */
+      for(rank_set_t set=0; set<sets; ++set) {
+        if (rank_set_size(set) == m) {
+          rank_set_index_t index = rank_set_index(set, used);
+          if (rank_set_intersect(set, used)) {
+            expect(index == INVALID_RANK_SET_INDEX);
+          } else {
+            require(index >= 0 && index < size);
+
+            require(index_to_set[index] == INVALID_RANK_SET);
+            index_to_set[index] = set;
+
+            ++count;
+          }
+        }
+      }
+
+      /* make sure counts line up */
+      expect(count == size);
+    }
+  }
+
+  free(index_to_set);
+}
+
 TEST(rank_set_valid) {
   for(rank_set_t i=0; i<(1u<<RANKS); ++i) {
     expect(rank_set_valid(i));
