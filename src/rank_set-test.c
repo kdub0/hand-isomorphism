@@ -51,3 +51,12 @@ TEST(rank_set_union) {
   expect(rank_set_union(1, 2) == 3);
   expect(rank_set_union(7, 3) == 7);
 }
+
+TEST(rank_set_is_set) {
+  expect(!rank_set_is_set(0, 0));
+  expect(rank_set_is_set(1, 0));
+  expect(!rank_set_is_set(2, 0));
+  expect(!rank_set_is_set(2, 3));
+  expect(rank_set_is_set(2, 1));
+  expect(rank_set_is_set(3, 1));
+}
