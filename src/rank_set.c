@@ -38,6 +38,9 @@ rank_set_t rank_set_from_rank_array(size_t n, const card_t ranks[]) {
 rank_set_t rank_set_from_card_array(size_t n, const card_t cards[], card_t suit) {
   rank_set_t set = EMPTY_RANK_SET;
   for(size_t i=0; i<n; ++i) {
+    if (!deck_valid_card(cards[i])) {
+      return INVALID_RANK_SET;
+    }
     if (deck_get_suit(cards[i]) == suit) {
       card_t rank = deck_get_rank(cards[i]);
       if (rank_set_is_set(set, rank)) {
