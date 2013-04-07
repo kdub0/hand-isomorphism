@@ -65,6 +65,16 @@ TEST(rank_set_add) {
   expect(rank_set_add(0, 0) == 1);
   expect(rank_set_add(0, 1) == 2);
   expect(rank_set_add(2, 0) == 3);
-  expect(rank_set_add(3, 3) == 7);
-  expect(rank_set_add(1, 3) == 1);
+  expect(rank_set_add(3, 2) == 7);
+  expect(rank_set_add(1, 2) == 5);
+}
+
+TEST(rank_set_set) {
+  expect(rank_set_set(0, 0) == 1);
+  expect(rank_set_set(0, 1) == 2);
+  expect(rank_set_set(2, 0) == 3);
+  expect(rank_set_set(3, 3) == 7);
+  expect(rank_set_set(1, 3) == 5);
+  expect(rank_set_set(1, 0) == 1);
+  expect(rank_set_set(3, 1) == 1);
 }
