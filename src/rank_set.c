@@ -88,7 +88,18 @@ rank_set_index_t rank_set_index_size(size_t m, rank_set_t used) {
 
 rank_set_index_t rank_set_index(rank_set_t set, rank_set_t used) {
   if (rank_set_valid(set) && rank_set_valid(used) && rank_set_intersect(set, used) == EMPTY_RANK_SET) {
-    /* FIXME: add the meat */
+    size_t m = rank_set_size(set);
+    
+    rank_set_index_t index = 0;
+    for(size_t i=0; i<m; ++i) {
+      card_t rank    = rank_set_next(&set);
+      size_t smaller = rank_set_size(rank_set_intersect(rank_set_from_rank(rank)-1, used));
+      if (rank-smaller >= i+1) {
+        index       += nCr(rank-smaller, i+1); 
+      }
+    }
+
+    return index;
   }
   return INVALID_RANK_SET_INDEX;
 }
