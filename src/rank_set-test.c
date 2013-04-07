@@ -98,4 +98,14 @@ TEST(rank_set_unset) {
   expect(rank_set_unset(5, 1) == 5);
 }
 
+TEST(rank_set_toggle) {
+  expect(rank_set_toggle(1, 0) == 0);
+  expect(rank_set_toggle(3, 0) == 2);
+  expect(rank_set_toggle(7, 1) == 5);
+  expect(rank_set_toggle(7, 2) == 3);
+  expect(rank_set_toggle(7, 0) == 6);
+  expect(rank_set_toggle(0, 0) == 1);
+  expect(rank_set_toggle(2, 0) == 3);
+  expect(rank_set_toggle(5, 1) == 7);
+}
 
