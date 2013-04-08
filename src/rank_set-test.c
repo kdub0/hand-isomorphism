@@ -101,22 +101,47 @@ TEST(rank_set_index_size) {
   expect(rank_set_index_size(3, 3) == 165);
 }
 
+TEST(rank_set_index_empty_match) {
+  for(rank_set_t set=0; set<RANK_SETS; ++set) {
+    require(rank_set_index_empty(set) == rank_set_index_nCr_empty(set));
+  }
+}
+
+TEST(rank_set_index_match) {
+  for(rank_set_t used=0; used<RANK_SETS; ++used) {
+    for(rank_set_t set=0; set<RANK_SETS; ++set) {
+      require(rank_set_index(set, used) == rank_set_index_nCr(set, used));
+    }
+  }
+}
+
+TEST(rank_set_unindex_match) {
+  for(size_t used=0; used<RANK_SETS; ++used) {
+    size_t used_size = rank_set_size(used);
+    for(size_t m=0; m<=RANKS-used_size; ++m) {
+      rank_set_index_t size = rank_set_index_size(m, used);
+      for(rank_set_index_t idx=0; idx<size; ++idx) {
+        require(rank_set_unindex(m, idx, used) == rank_set_unindex_nCr(m, idx, used));
+      }
+    }
+  }
+}
+
 TEST(rank_set_index_all_available) {
   expect(rank_set_index(INVALID_RANK_SET, 0) == INVALID_RANK_SET_INDEX);
   expect(rank_set_index(0, INVALID_RANK_SET) == INVALID_RANK_SET_INDEX);
   
-  size_t sets = 1u<<RANKS;
-  rank_set_t * index_to_set = malloc(sets*sizeof(rank_set_t)); require(index_to_set);
+  rank_set_t * index_to_set = malloc(RANK_SETS*sizeof(rank_set_t)); require(index_to_set);
 
   /* loop over all sets sizes */
   for(size_t m=0; m<=RANKS; ++m) {
-    memset(index_to_set, 0xff, sets*sizeof(rank_set_t)); /* set to invalid */
+    memset(index_to_set, 0xff, RANK_SETS*sizeof(rank_set_t)); /* set to invalid */
 
     rank_set_index_t size = rank_set_index_size(m, 0), count = 0;
-    require(size <= sets);
+    require(size <= RANK_SETS);
 
     /* loop over all sets, make sure no collisions */
-    for(rank_set_t set=0; set<sets; ++set) {
+    for(rank_set_t set=0; set<RANK_SETS; ++set) {
       if (rank_set_size(set) == m) {
         rank_set_index_t index = rank_set_index(set, 0);
         require(index >= 0 && index < size);
@@ -139,22 +164,21 @@ TEST(rank_set_index_all) {
   expect(rank_set_index(INVALID_RANK_SET, 0) == INVALID_RANK_SET_INDEX);
   expect(rank_set_index(0, INVALID_RANK_SET) == INVALID_RANK_SET_INDEX);
   
-  size_t sets = 1u<<RANKS;
-  rank_set_t * index_to_set = malloc(sets*sizeof(rank_set_t)); require(index_to_set);
+  rank_set_t * index_to_set = malloc(RANK_SETS*sizeof(rank_set_t)); require(index_to_set);
 
   /* loop over all unavailable sets */
-  for(rank_set_t used=0; used<sets; ++used) {
+  for(rank_set_t used=0; used<RANK_SETS; ++used) {
     size_t used_size = rank_set_size(used);
     
     /* loop over all sets sizes */
     for(size_t m=0; m<=RANKS-used_size; ++m) {
-      memset(index_to_set, 0xff, sets*sizeof(rank_set_t)); /* set to invalid */
+      memset(index_to_set, 0xff, RANK_SETS*sizeof(rank_set_t)); /* set to invalid */
 
       rank_set_index_t size = rank_set_index_size(m, used), count = 0;
-      require(size <= sets);
+      require(size <= RANK_SETS);
 
       /* loop over all sets, make sure no collisions */
-      for(rank_set_t set=0; set<sets; ++set) {
+      for(rank_set_t set=0; set<RANK_SETS; ++set) {
         if (rank_set_size(set) == m) {
           rank_set_index_t index = rank_set_index(set, used);
           if (rank_set_intersect(set, used)) {
@@ -179,19 +203,15 @@ TEST(rank_set_index_all) {
 }
 
 TEST(rank_set_unindex_all_available) {
-  size_t sets = 1u<<RANKS;
-
-  for(rank_set_t set=0; set<sets; ++set) {
+  for(rank_set_t set=0; set<RANK_SETS; ++set) {
     size_t m = rank_set_size(set);
     require(set == rank_set_unindex(m, rank_set_index(set, 0), 0));
   }
 }
 
 TEST(rank_set_unindex_all) {
-  size_t sets = 1u<<RANKS;
-
-  for(rank_set_t used=0; used<sets; ++used) {
-    for(rank_set_t set=0; set<sets; ++set) {
+  for(rank_set_t used=0; used<RANK_SETS; ++used) {
+    for(rank_set_t set=0; set<RANK_SETS; ++set) {
       if (!rank_set_intersect(set, used)) {
         size_t m = rank_set_size(set);
         require(set == rank_set_unindex(m, rank_set_index(set, used), used));
@@ -201,7 +221,7 @@ TEST(rank_set_unindex_all) {
 }
 
 TEST(rank_set_valid) {
-  for(rank_set_t i=0; i<(1u<<RANKS); ++i) {
+  for(rank_set_t i=0; i<RANK_SETS; ++i) {
     expect(rank_set_valid(i));
   }
 }
@@ -209,7 +229,7 @@ TEST(rank_set_valid) {
 TEST(rank_set_empty) {
   require(0 == EMPTY_RANK_SET);
   expect(rank_set_empty(EMPTY_RANK_SET));
-  for(rank_set_t i=1; i<(1u<<RANKS); ++i) {
+  for(rank_set_t i=1; i<RANK_SETS; ++i) {
     expect(!rank_set_empty(i));
   }
 }

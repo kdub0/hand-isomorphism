@@ -14,24 +14,29 @@ OBJ      :=$(SRC:.c=.o)
 TEST_SRC :=$(addprefix src/,rank_set-test.c test.c)
 TEST_OBJ :=$(TEST_SRC:.c=.o)
 
+MAINS    :=check index_flop unindex_flop
+MAIN_SRC :=$(addprefix src/,$(MAINS:=-main.c))
+MAIN_OBJ :=$(MAIN_SRC:.c=.o)
+
+BUILD    :=index_flop unindex_flop
+TARGETS  :=src/check $(BUILD)
+
 .PHONY: all clean check
 
-all: index_flop unindex_flop
+all: $(BUILD)
 
 clean:
-	rm -f src/check index_flop unindex_flop src/check-main.o src/index_flop-main.o src/unindex_flop-main.o
-	rm -f $(TEST_OBJ) $(OBJ)
+	rm -f $(TARGETS)
+	rm -f $(MAIN_OBJ) $(TEST_OBJ) $(OBJ)
 
 check: src/check
 	./src/check
 
 src/check: src/check-main.o $(TEST_OBJ) $(OBJ)
 
-index_flop: src/index_flop-main.o $(OBJ)
+$(BUILD): %: src/%-main.o $(OBJ)
 
-unindex_flop: src/unindex_flop-main.o $(OBJ)
-
-src/check index_flop unindex_flop:
+$(TARGETS):
 	$(CC) $(LDFLAGS) -o $@ $^ $(LOADLIBES) $(LDLIBS)
 
 src/rank_set.o src/rank_set-test.o: src/rank_set.h src/deck.h
