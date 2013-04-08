@@ -1,16 +1,34 @@
 #include <stdbool.h>
 #include "rank_set.h"
 
-/* FIXME: temporary */
-static inline size_t nCr(size_t n, size_t r) {
-  if (r <= n) { 
+uint64_t nCr52[53][64];
+static void __attribute__((constructor)) init_nCr52() {
+  nCr52[0][0] = 1;
+  for(size_t n=1; n<=52; ++n) {
+    nCr52[n][0] = 1;
+    nCr52[n][n] = 1;
+    for(size_t k=1; k<n; ++k) {
+      nCr52[n][k] = nCr52[n-1][k-1] + nCr52[n-1][k];
+    }
+  }
+}
+
+/* FIXME: move this else where */
+static inline uint64_t nCr(size_t n, size_t r) {
+  if (r <= n) {
+    if (n <= 52) {
+      return nCr52[n][r];
+    }
+
     if (n-r < r) {
       r = n-r;
     }
-    size_t result = 1;
+
+    uint64_t result = 1;
     for(int i=0; i<r; ++i) {
       result = result*(n-i)/(i+1);
     }
+
     return result;
   } else {
     return 0;
@@ -106,7 +124,19 @@ rank_set_index_t rank_set_index(rank_set_t set, rank_set_t used) {
 
 rank_set_t rank_set_unindex(size_t m, rank_set_index_t index, rank_set_t used) {
   if (rank_set_index_valid(m, index, used)) {
-    /* FIXME: add the meat */
+    rank_set_t set = EMPTY_RANK_SET;
+    for(size_t i=0; i<m; ++i) {
+      card_t r = 0, count = 0;
+      for(; rank_set_is_set(used, r); ++r) {}
+      for(; nCr(count+1, m-i) <= index; ++count) {
+        for(++r; rank_set_is_set(used, r); ++r) {}
+      }
+      if (count >= m-i) {
+        index -= nCr(count, m-i);
+      }
+      set = rank_set_set(set, r);
+    }
+    return set;
   }
   return INVALID_RANK_SET;
 }
