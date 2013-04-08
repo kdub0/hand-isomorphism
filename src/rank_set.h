@@ -21,6 +21,7 @@ typedef uint_fast16_t rank_set_t;
 
 #define EMPTY_RANK_SET          0
 #define INVALID_RANK_SET        UINT_FAST16_MAX
+#define RANK_SETS               (1u<<RANKS)
 
 typedef uint64_t rank_set_index_t;
 
@@ -79,6 +80,34 @@ rank_set_index_t rank_set_index_size(size_t m, rank_set_t used);
  * @returns true if index is valid
  */
 _Bool rank_set_index_valid(size_t m, rank_set_index_t index, rank_set_t used);
+
+/**
+ * @param set set to index
+ * @returns index of rank set between [0,rank_set_index_size(rank_set_size(set),0)), or
+ * INVALID_RANK_SET_INDEX if not possible
+ * @note uses combinatorics, not tabulated
+ * @note specialization of rank_set_index_nCr
+ */
+rank_set_index_t rank_set_index_nCr_empty(rank_set_t set); 
+    
+/**
+ * @param set set to index
+ * @param used ranks that are unavailable
+ * @returns index of rank set between [0,rank_set_index_size(rank_set_size(set),used)), or
+ * INVALID_RANK_SET_INDEX if not possible
+ * @note uses combinatorics, not tabulated
+ */
+rank_set_index_t rank_set_index_nCr(rank_set_t set, rank_set_t used);
+
+/**
+ * @param m size of set to be unindexed
+ * @param index index of rank set 
+ * @param used ranks that are unavailable
+ * @returns rank set represented by index, or INVALID_RANK_SET if index is invalid, or
+ * m + rank_set_size(used) > RANKS
+ * @note uses combinatorics, not tabulated
+ */
+rank_set_t rank_set_unindex_nCr(size_t m, rank_set_index_t index, rank_set_t used);
 
 /**
  * @param set set to index
