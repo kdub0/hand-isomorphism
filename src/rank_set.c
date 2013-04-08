@@ -35,13 +35,17 @@ static inline uint64_t nCr(size_t n, size_t r) {
   }
 }
 
-static uint16_t set_to_index[RANK_SETS], index_to_set_base[RANK_SETS];
+static uint16_t set_to_index[RANK_SETS], rank_set_size_[RANK_SETS], index_to_set_base[RANK_SETS];
 static uint16_t * index_to_set[RANKS+1];
 
 static void __attribute__((constructor(2048))) init_rank_set_tables() {
   index_to_set[0] = index_to_set_base;
   for(size_t i=1; i<=RANKS; ++i) {
     index_to_set[i] = index_to_set[i-1] + rank_set_index_size(i-1, 0);
+  }
+
+  for(rank_set_t set=0; set<RANK_SETS; ++set) {
+    rank_set_size_[set] = __builtin_popcount(set);
   }
 
   for(rank_set_t set=0; set<RANK_SETS; ++set) {
@@ -54,7 +58,8 @@ static void __attribute__((constructor(2048))) init_rank_set_tables() {
 }
 
 size_t rank_set_size(rank_set_t set) {
-  return __builtin_popcount(set);  
+  assert(rank_set_valid(set));
+  return rank_set_size_[set];
 }
 
 rank_set_t rank_set_from_rank_array(size_t n, const card_t ranks[]) {
