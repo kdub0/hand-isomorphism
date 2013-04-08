@@ -111,6 +111,14 @@ rank_set_t rank_set_unindex_nCr(size_t m, rank_set_index_t index, rank_set_t use
 
 /**
  * @param set set to index
+ * @returns index of rank set between [0,rank_set_index_size(rank_set_size(set),0)), or
+ * INVALID_RANK_SET_INDEX if not possible
+ * @note specialization of rank_set_index
+ */
+rank_set_index_t rank_set_index_empty(rank_set_t set); 
+
+/**
+ * @param set set to index
  * @param used ranks that are unavailable
  * @returns index of rank set between [0,rank_set_index_size(rank_set_size(set),used)), or
  * INVALID_RANK_SET_INDEX if not possible

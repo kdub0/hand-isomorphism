@@ -2,7 +2,7 @@
 #include "rank_set.h"
 
 uint64_t nCr52[53][64];
-static void __attribute__((constructor)) init_nCr52() {
+static void __attribute__((constructor(1024))) init_nCr52() {
   nCr52[0][0] = 1;
   for(size_t n=1; n<=52; ++n) {
     nCr52[n][0] = 1;
@@ -32,6 +32,24 @@ static inline uint64_t nCr(size_t n, size_t r) {
     return result;
   } else {
     return 0;
+  }
+}
+
+static uint16_t set_to_index[RANK_SETS], index_to_set_base[RANK_SETS];
+static uint16_t * index_to_set[RANKS+1];
+
+static void __attribute__((constructor(2048))) init_rank_set_tables() {
+  index_to_set[0] = index_to_set_base;
+  for(size_t i=1; i<=RANKS; ++i) {
+    index_to_set[i] = index_to_set[i-1] + rank_set_index_size(i-1, 0);
+  }
+
+  for(rank_set_t set=0; set<RANK_SETS; ++set) {
+    rank_set_index_t index = rank_set_index_nCr_empty(set);
+    size_t m = rank_set_size(set);
+
+    set_to_index[set]      = index;
+    index_to_set[m][index] = set;
   }
 }
 
@@ -104,6 +122,67 @@ rank_set_index_t rank_set_index_size(size_t m, rank_set_t used) {
   return INVALID_RANK_SET_INDEX;
 }
 
+rank_set_index_t rank_set_index_nCr_empty(rank_set_t set) {
+  if (rank_set_valid(set)) {
+    size_t m = rank_set_size(set);
+    
+    rank_set_index_t index = 0;
+    for(size_t i=0; i<m; ++i) {
+      card_t rank = rank_set_next(&set);
+      if (rank >= i+1) {
+        index += nCr(rank, i+1); 
+      }
+    }
+
+    return index;
+  }
+  return INVALID_RANK_SET_INDEX;
+}
+
+rank_set_index_t rank_set_index_nCr(rank_set_t set, rank_set_t used) {
+  if (rank_set_valid(set) && rank_set_valid(used) && rank_set_intersect(set, used) == EMPTY_RANK_SET) {
+    size_t m = rank_set_size(set);
+    
+    rank_set_index_t index = 0;
+    for(size_t i=0; i<m; ++i) {
+      card_t rank    = rank_set_next(&set);
+      size_t smaller = rank_set_size(rank_set_intersect(rank_set_from_rank(rank)-1, used));
+      if (rank-smaller >= i+1) {
+        index       += nCr(rank-smaller, i+1); 
+      }
+    }
+
+    return index;
+  }
+  return INVALID_RANK_SET_INDEX;
+}
+
+rank_set_t rank_set_unindex_nCr(size_t m, rank_set_index_t index, rank_set_t used) {
+  if (rank_set_index_valid(m, index, used)) {
+    rank_set_t set = EMPTY_RANK_SET;
+    for(size_t i=0; i<m; ++i) {
+      card_t r = 0, count = 0;
+      for(; rank_set_is_set(used, r); ++r) {}
+      for(; nCr(count+1, m-i) <= index; ++count) {
+        for(++r; rank_set_is_set(used, r); ++r) {}
+      }
+      if (count >= m-i) {
+        index -= nCr(count, m-i);
+      }
+      set = rank_set_set(set, r);
+    }
+    return set;
+  }
+  return INVALID_RANK_SET;
+}
+
+rank_set_index_t rank_set_index_empty(rank_set_t set) {
+  if (rank_set_valid(set)) {
+    return set_to_index[set];
+  }
+  return INVALID_RANK_SET_INDEX;
+}
+
 rank_set_index_t rank_set_index(rank_set_t set, rank_set_t used) {
   if (rank_set_valid(set) && rank_set_valid(used) && rank_set_intersect(set, used) == EMPTY_RANK_SET) {
     size_t m = rank_set_size(set);
@@ -140,5 +219,6 @@ rank_set_t rank_set_unindex(size_t m, rank_set_index_t index, rank_set_t used) {
   }
   return INVALID_RANK_SET;
 }
+
 
 

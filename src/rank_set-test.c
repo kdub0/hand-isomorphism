@@ -101,13 +101,13 @@ TEST(rank_set_index_size) {
   expect(rank_set_index_size(3, 3) == 165);
 }
 
-TEST(rank_set_index_nCr_match_empty) {
+TEST(rank_set_index_empty_match) {
   for(rank_set_t set=0; set<RANK_SETS; ++set) {
-    require(rank_set_index(set, 0) == rank_set_index_nCr_empty(set));
+    require(rank_set_index_empty(set) == rank_set_index_nCr_empty(set));
   }
 }
 
-TEST(rank_set_index_nCr_match) {
+TEST(rank_set_index_match) {
   for(rank_set_t used=0; used<RANK_SETS; ++used) {
     for(rank_set_t set=0; set<RANK_SETS; ++set) {
       require(rank_set_index(set, used) == rank_set_index_nCr(set, used));
@@ -115,7 +115,7 @@ TEST(rank_set_index_nCr_match) {
   }
 }
 
-TEST(rank_set_unindex_nCr_match) {
+TEST(rank_set_unindex_match) {
   for(size_t used=0; used<RANK_SETS; ++used) {
     size_t used_size = rank_set_size(used);
     for(size_t m=0; m<=RANKS-used_size; ++m) {
