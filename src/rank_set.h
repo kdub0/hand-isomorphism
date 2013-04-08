@@ -139,7 +139,7 @@ rank_set_t rank_set_unindex(size_t m, rank_set_index_t index, rank_set_t used);
  * @returns true if rank set is valid
  */
 static inline _Bool rank_set_valid(rank_set_t set) {
-  return set != INVALID_RANK_SET;
+  return set < RANK_SETS;
 }
 
 /**

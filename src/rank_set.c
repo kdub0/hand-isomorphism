@@ -37,6 +37,7 @@ static inline uint64_t nCr(size_t n, size_t r) {
 
 static uint16_t set_to_index[RANK_SETS], rank_set_size_[RANK_SETS], index_to_set_base[RANK_SETS];
 static uint16_t * index_to_set[RANKS+1];
+static uint16_t used_to_index_mask[RANK_SETS][14];
 
 static void __attribute__((constructor(2048))) init_rank_set_tables() {
   index_to_set[0] = index_to_set_base;
@@ -54,6 +55,13 @@ static void __attribute__((constructor(2048))) init_rank_set_tables() {
 
     set_to_index[set]      = index;
     index_to_set[m][index] = set;
+  }
+
+  for(rank_set_t used=0; used<RANK_SETS; ++used) {
+    size_t i=rank_set_size(used)-1; for(rank_set_t rem=used; !rank_set_empty(rem); --i) {
+      card_t rank = rank_set_next(&rem);
+      used_to_index_mask[used][i] = rank_set_from_rank(rank) - 1;
+    }
   }
 }
 
@@ -190,36 +198,30 @@ rank_set_index_t rank_set_index_empty(rank_set_t set) {
 
 rank_set_index_t rank_set_index(rank_set_t set, rank_set_t used) {
   if (rank_set_valid(set) && rank_set_valid(used) && rank_set_intersect(set, used) == EMPTY_RANK_SET) {
-    size_t m = rank_set_size(set);
-    
-    rank_set_index_t index = 0;
+    size_t m = rank_set_size(used);
+   
     for(size_t i=0; i<m; ++i) {
-      card_t rank    = rank_set_next(&set);
-      size_t smaller = rank_set_size(rank_set_intersect(rank_set_from_rank(rank)-1, used));
-      if (rank-smaller >= i+1) {
-        index       += nCr(rank-smaller, i+1); 
-      }
+      rank_set_t mask = used_to_index_mask[used][i];
+      rank_set_t low = set & mask, high = set & ~mask;
+      set = high>>1 | low;
     }
 
-    return index;
+    return rank_set_index_empty(set);
   }
   return INVALID_RANK_SET_INDEX;
 }
 
 rank_set_t rank_set_unindex(size_t m, rank_set_index_t index, rank_set_t used) {
   if (rank_set_index_valid(m, index, used)) {
-    rank_set_t set = EMPTY_RANK_SET;
-    for(size_t i=0; i<m; ++i) {
-      card_t r = 0, count = 0;
-      for(; rank_set_is_set(used, r); ++r) {}
-      for(; nCr(count+1, m-i) <= index; ++count) {
-        for(++r; rank_set_is_set(used, r); ++r) {}
-      }
-      if (count >= m-i) {
-        index -= nCr(count, m-i);
-      }
-      set = rank_set_set(set, r);
+    rank_set_t set = index_to_set[m][index];    
+
+    size_t n = rank_set_size(used);
+    for(ptrdiff_t i=n-1; i>=0; --i) {
+      rank_set_t mask = used_to_index_mask[used][i];
+      rank_set_t low = set & mask, high = set & ~mask;
+      set = high<<1 | low;
     }
+
     return set;
   }
   return INVALID_RANK_SET;
