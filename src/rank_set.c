@@ -1,8 +1,13 @@
 #include <stdbool.h>
 #include "rank_set.h"
 
-uint64_t nCr52[53][64];
-static void __attribute__((constructor(1024))) init_nCr52() {
+static uint16_t set_to_index[RANK_SETS], rank_set_size_[RANK_SETS], index_to_set_base[RANK_SETS];
+static uint16_t * index_to_set[RANKS+1];
+static uint16_t used_to_index_mask[RANK_SETS][14];
+static uint64_t nCr52[53][64];
+
+static void __attribute__((constructor)) init_rank_set_tables() {
+  /* FIXME: move this else where */
   nCr52[0][0] = 1;
   for(size_t n=1; n<=52; ++n) {
     nCr52[n][0] = 1;
@@ -11,35 +16,7 @@ static void __attribute__((constructor(1024))) init_nCr52() {
       nCr52[n][k] = nCr52[n-1][k-1] + nCr52[n-1][k];
     }
   }
-}
-
-/* FIXME: move this else where */
-static inline uint64_t nCr(size_t n, size_t r) {
-  if (r <= n) {
-    if (n <= 52) {
-      return nCr52[n][r];
-    }
-
-    if (n-r < r) {
-      r = n-r;
-    }
-
-    uint64_t result = 1;
-    for(int i=0; i<r; ++i) {
-      result = result*(n-i)/(i+1);
-    }
-
-    return result;
-  } else {
-    return 0;
-  }
-}
-
-static uint16_t set_to_index[RANK_SETS], rank_set_size_[RANK_SETS], index_to_set_base[RANK_SETS];
-static uint16_t * index_to_set[RANKS+1];
-static uint16_t used_to_index_mask[RANK_SETS][14];
-
-static void __attribute__((constructor(2048))) init_rank_set_tables() {
+  
   index_to_set[0] = index_to_set_base;
   for(size_t i=1; i<=RANKS; ++i) {
     index_to_set[i] = index_to_set[i-1] + rank_set_index_size(i-1, 0);
@@ -62,6 +39,27 @@ static void __attribute__((constructor(2048))) init_rank_set_tables() {
       card_t rank = rank_set_next(&rem);
       used_to_index_mask[used][i] = rank_set_from_rank(rank) - 1;
     }
+  }
+}
+
+static inline uint64_t nCr(size_t n, size_t r) {
+  if (r <= n) {
+    if (n <= 52) {
+      return nCr52[n][r];
+    }
+
+    if (n-r < r) {
+      r = n-r;
+    }
+
+    uint64_t result = 1;
+    for(int i=0; i<r; ++i) {
+      result = result*(n-i)/(i+1);
+    }
+
+    return result;
+  } else {
+    return 0;
   }
 }
 
