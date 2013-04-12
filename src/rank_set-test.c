@@ -82,7 +82,7 @@ TEST(rank_set_to_card_array) {
 }
 
 TEST(rank_set_index_valid) {
-  rank_set_index_t size = rank_set_index_size(3, 1);
+  rank_set_index_t size = rank_set_index_size_from_count(3, 1);
   for(rank_set_index_t i=0; i<size; ++i) {
     expect(rank_set_index_valid(3, i, 1));
   }
@@ -90,15 +90,24 @@ TEST(rank_set_index_valid) {
   expect(!rank_set_index_valid(3, 5+size, 1));
 }
 
-TEST(rank_set_index_size) {
-  expect(rank_set_index_size(2, 0) == 78);
-  expect(rank_set_index_size(2, 1) == 66);
-  expect(rank_set_index_size(2, 2) == 66);
-  expect(rank_set_index_size(2, 3) == 55);
-  expect(rank_set_index_size(3, 0) == 286);
-  expect(rank_set_index_size(3, 1) == 220);
-  expect(rank_set_index_size(3, 2) == 220);
-  expect(rank_set_index_size(3, 3) == 165);
+TEST(rank_set_index_size_from_count) {
+  expect(rank_set_index_size_from_count(2, 0) == 78);
+  expect(rank_set_index_size_from_count(2, 1) == 66);
+  expect(rank_set_index_size_from_count(2, 2) == 55);
+  expect(rank_set_index_size_from_count(3, 0) == 286);
+  expect(rank_set_index_size_from_count(3, 1) == 220);
+  expect(rank_set_index_size_from_count(3, 2) == 165);
+}
+
+TEST(rank_set_index_size_from_used) {
+  expect(rank_set_index_size_from_used(2, 0) == 78);
+  expect(rank_set_index_size_from_used(2, 1) == 66);
+  expect(rank_set_index_size_from_used(2, 2) == 66);
+  expect(rank_set_index_size_from_used(2, 3) == 55);
+  expect(rank_set_index_size_from_used(3, 0) == 286);
+  expect(rank_set_index_size_from_used(3, 1) == 220);
+  expect(rank_set_index_size_from_used(3, 2) == 220);
+  expect(rank_set_index_size_from_used(3, 3) == 165);
 }
 
 TEST(rank_set_index_empty_match) {
@@ -119,7 +128,7 @@ TEST(rank_set_unindex_match) {
   for(size_t used=0; used<RANK_SETS; ++used) {
     size_t used_size = rank_set_size(used);
     for(size_t m=0; m<=RANKS-used_size; ++m) {
-      rank_set_index_t size = rank_set_index_size(m, used);
+      rank_set_index_t size = rank_set_index_size_from_used(m, used);
       for(rank_set_index_t idx=0; idx<size; ++idx) {
         require(rank_set_unindex(m, idx, used) == rank_set_unindex_nCr(m, idx, used));
       }
@@ -137,7 +146,7 @@ TEST(rank_set_index_all_available) {
   for(size_t m=0; m<=RANKS; ++m) {
     memset(index_to_set, 0xff, RANK_SETS*sizeof(rank_set_t)); /* set to invalid */
 
-    rank_set_index_t size = rank_set_index_size(m, 0), count = 0;
+    rank_set_index_t size = rank_set_index_size_from_count(m, 0), count = 0;
     require(size <= RANK_SETS);
 
     /* loop over all sets, make sure no collisions */
@@ -174,7 +183,7 @@ TEST(rank_set_index_all) {
     for(size_t m=0; m<=RANKS-used_size; ++m) {
       memset(index_to_set, 0xff, RANK_SETS*sizeof(rank_set_t)); /* set to invalid */
 
-      rank_set_index_t size = rank_set_index_size(m, used), count = 0;
+      rank_set_index_t size = rank_set_index_size_from_used(m, used), count = 0;
       require(size <= RANK_SETS);
 
       /* loop over all sets, make sure no collisions */
