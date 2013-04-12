@@ -8,10 +8,10 @@
 
 CFLAGS   ?=-std=c99 -Wall -g -O2
 
-SRC      :=$(addprefix src/,rank_set.c)
+SRC      :=$(addprefix src/,group_index.c rank_set.c)
 OBJ      :=$(SRC:.c=.o)
 
-TEST_SRC :=$(addprefix src/,rank_set-test.c test.c)
+TEST_SRC :=$(addprefix src/,group_index-test.c rank_set-test.c test.c)
 TEST_OBJ :=$(TEST_SRC:.c=.o)
 
 MAINS    :=check index_flop unindex_flop
@@ -39,6 +39,8 @@ $(BUILD): %: src/%-main.o $(OBJ)
 $(TARGETS):
 	$(CC) $(LDFLAGS) -o $@ $^ $(LOADLIBES) $(LDLIBS)
 
+src/group_index.o: src/rank_set.h
+src/group_index.o src/group_index-test.o: src/group_index.h src/deck.h
 src/rank_set.o src/rank_set-test.o: src/rank_set.h src/deck.h
 src/check-main.c: src/test.h
 

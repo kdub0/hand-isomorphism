@@ -19,7 +19,7 @@ static void __attribute__((constructor)) init_rank_set_tables() {
   
   index_to_set[0] = index_to_set_base;
   for(size_t i=1; i<=RANKS; ++i) {
-    index_to_set[i] = index_to_set[i-1] + rank_set_index_size(i-1, 0);
+    index_to_set[i] = index_to_set[i-1] + rank_set_index_size_from_count(i-1, 0);
   }
 
   for(rank_set_t set=0; set<RANK_SETS; ++set) {
@@ -120,15 +120,19 @@ bool rank_set_to_card_array(rank_set_t set, card_t cards[], card_t suit) {
 }
 
 bool rank_set_index_valid(size_t m, rank_set_index_t index, rank_set_t used) {
-  return index != INVALID_RANK_SET_INDEX && index < rank_set_index_size(m, used);
+  return index != INVALID_RANK_SET_INDEX && index < rank_set_index_size_from_used(m, used);
 }
 
-rank_set_index_t rank_set_index_size(size_t m, rank_set_t used) {
+rank_set_index_t rank_set_index_size_from_count(size_t m, size_t used_size) {
+  if (used_size+m <= RANKS) {
+    return nCr(RANKS-used_size, m);
+  }
+  return INVALID_RANK_SET_INDEX;
+}
+
+rank_set_index_t rank_set_index_size_from_used(size_t m, rank_set_t used) {
   if (rank_set_valid(used)) {
-    size_t used_size = rank_set_size(used);
-    if (used_size+m <= RANKS) {
-      return nCr(RANKS-used_size, m);
-    }
+    return rank_set_index_size_from_count(m, rank_set_size(used));
   }
   return INVALID_RANK_SET_INDEX;
 }
