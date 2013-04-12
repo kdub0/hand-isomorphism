@@ -19,6 +19,7 @@
 #define SUITS                4
 #define RANKS                13
 #define CARDS                52
+#define MAX_ROUNDS           8
 
 typedef uint_fast8_t card_t;
 
