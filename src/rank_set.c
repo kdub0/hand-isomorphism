@@ -19,7 +19,7 @@ static void __attribute__((constructor)) init_rank_set_tables() {
   
   index_to_set[0] = index_to_set_base;
   for(size_t i=1; i<=RANKS; ++i) {
-    index_to_set[i] = index_to_set[i-1] + rank_set_index_size(i-1, 0);
+    index_to_set[i] = index_to_set[i-1] + rank_set_index_size_from_count(i-1, 0);
   }
 
   for(rank_set_t set=0; set<RANK_SETS; ++set) {
@@ -120,15 +120,19 @@ bool rank_set_to_card_array(rank_set_t set, card_t cards[], card_t suit) {
 }
 
 bool rank_set_index_valid(size_t m, rank_set_index_t index, rank_set_t used) {
-  return index != INVALID_RANK_SET_INDEX && index < rank_set_index_size(m, used);
+  return index != INVALID_RANK_SET_INDEX && index < rank_set_index_size_from_used(m, used);
 }
 
-rank_set_index_t rank_set_index_size(size_t m, rank_set_t used) {
+rank_set_index_t rank_set_index_size_from_count(size_t m, size_t used_size) {
+  if (used_size+m <= RANKS) {
+    return nCr(RANKS-used_size, m);
+  }
+  return INVALID_RANK_SET_INDEX;
+}
+
+rank_set_index_t rank_set_index_size_from_used(size_t m, rank_set_t used) {
   if (rank_set_valid(used)) {
-    size_t used_size = rank_set_size(used);
-    if (used_size+m <= RANKS) {
-      return nCr(RANKS-used_size, m);
-    }
+    return rank_set_index_size_from_count(m, rank_set_size(used));
   }
   return INVALID_RANK_SET_INDEX;
 }
@@ -194,100 +198,29 @@ rank_set_index_t rank_set_index_empty(rank_set_t set) {
   return INVALID_RANK_SET_INDEX;
 }
 
-#define define_rank_set_shift_down(m) \
-static rank_set_t rank_set_shift_down_##m(rank_set_t set, rank_set_t used) { \
-  for(size_t i=0; i<m; ++i) { \
-    rank_set_t mask = used_to_index_mask[used][i]; \
-    rank_set_t low = set & mask, high = set & ~mask;\
-    set = high>>1 | low;\
-  } \
-  return set; \
-}
-
-define_rank_set_shift_down(0);
-define_rank_set_shift_down(1);
-define_rank_set_shift_down(2);
-define_rank_set_shift_down(3);
-define_rank_set_shift_down(4);
-define_rank_set_shift_down(5);
-define_rank_set_shift_down(6);
-define_rank_set_shift_down(7);
-define_rank_set_shift_down(8);
-define_rank_set_shift_down(9);
-define_rank_set_shift_down(10);
-define_rank_set_shift_down(11);
-define_rank_set_shift_down(12);
-define_rank_set_shift_down(13);
-
-static rank_set_t (*rank_set_shift_down[14])(rank_set_t, rank_set_t) = {
-  rank_set_shift_down_0,
-  rank_set_shift_down_1,
-  rank_set_shift_down_2,
-  rank_set_shift_down_3,
-  rank_set_shift_down_4,
-  rank_set_shift_down_5,
-  rank_set_shift_down_6,
-  rank_set_shift_down_7,
-  rank_set_shift_down_8,
-  rank_set_shift_down_9,
-  rank_set_shift_down_10,
-  rank_set_shift_down_11,
-  rank_set_shift_down_12,
-  rank_set_shift_down_13,
-};
-
-#define define_rank_set_shift_up(n) \
-static rank_set_t rank_set_shift_up_##n(rank_set_t set, rank_set_t used) { \
-  for(ptrdiff_t i=n-1; i>=0; --i) { \
-    rank_set_t mask = used_to_index_mask[used][i]; \
-    rank_set_t low = set & mask, high = set & ~mask; \
-    set = high<<1 | low; \
-  } \
-  return set; \
-}
-
-define_rank_set_shift_up(0);
-define_rank_set_shift_up(1);
-define_rank_set_shift_up(2);
-define_rank_set_shift_up(3);
-define_rank_set_shift_up(4);
-define_rank_set_shift_up(5);
-define_rank_set_shift_up(6);
-define_rank_set_shift_up(7);
-define_rank_set_shift_up(8);
-define_rank_set_shift_up(9);
-define_rank_set_shift_up(10);
-define_rank_set_shift_up(11);
-define_rank_set_shift_up(12);
-define_rank_set_shift_up(13);
-
-static rank_set_t (*rank_set_shift_up[14])(rank_set_t, rank_set_t) = {
-  rank_set_shift_up_0,
-  rank_set_shift_up_1,
-  rank_set_shift_up_2,
-  rank_set_shift_up_3,
-  rank_set_shift_up_4,
-  rank_set_shift_up_5,
-  rank_set_shift_up_6,
-  rank_set_shift_up_7,
-  rank_set_shift_up_8,
-  rank_set_shift_up_9,
-  rank_set_shift_up_10,
-  rank_set_shift_up_11,
-  rank_set_shift_up_12,
-  rank_set_shift_up_13,
-};
-
 rank_set_index_t rank_set_index(rank_set_t set, rank_set_t used) {
   if (rank_set_valid(set) && rank_set_valid(used) && rank_set_intersect(set, used) == EMPTY_RANK_SET) {
-    return rank_set_index_empty(rank_set_shift_down[rank_set_size(used)](set, used));
+    size_t m = rank_set_size(used);
+    for(size_t i=0; i<m; ++i) { 
+      rank_set_t mask = used_to_index_mask[used][i]; 
+      rank_set_t low = set & mask, high = set & ~mask;
+      set = high>>1 | low;
+    } 
+    return rank_set_index_empty(set);
   }
   return INVALID_RANK_SET_INDEX;
 }
 
 rank_set_t rank_set_unindex(size_t m, rank_set_index_t index, rank_set_t used) {
   if (rank_set_index_valid(m, index, used)) {
-    return rank_set_shift_up[rank_set_size(used)](index_to_set[m][index], used);
+    size_t n = rank_set_size(used);
+    rank_set_t set = index_to_set[m][index];
+    for(ptrdiff_t i=n-1; i>=0; --i) { 
+      rank_set_t mask = used_to_index_mask[used][i]; 
+      rank_set_t low = set & mask, high = set & ~mask; 
+      set = high<<1 | low; 
+    } 
+    return set; 
   }
   return INVALID_RANK_SET;
 }

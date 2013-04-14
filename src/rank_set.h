@@ -68,10 +68,17 @@ _Bool rank_set_to_card_array(rank_set_t set, card_t cards[], card_t suit);
 
 /**
  * @param m size of set to be indexed
- * @param used ranks that are unavailable
- * @returns number of sets of size m
+ * @param used_size number of unavailable ranks
+ * @returns number of sets of size m, or INVALID_RANK_SET_INDEX if indexing more ranks than possible
  */
-rank_set_index_t rank_set_index_size(size_t m, rank_set_t used);
+rank_set_index_t rank_set_index_size_from_count(size_t m, size_t used_size);
+
+/**
+ * @param m size of set to be indexed
+ * @param used ranks that are unavailable
+ * @returns number of sets of size m, or INVALID_RANK_SET_INDEX if indexing more ranks than possible
+ */
+rank_set_index_t rank_set_index_size_from_used(size_t m, rank_set_t used);
 
 /**
  * @param m size of the indexed set
@@ -179,10 +186,10 @@ static inline rank_set_t rank_set_from_rank(card_t rank) {
 static inline card_t rank_from_rank_set(rank_set_t set) {
   /* from: http://graphics.stanford.edu/~seander/bithacks.html */
   assert(rank_set_is_singleton(set));
-  return !!(set & 0xaaaa)    |
-         !!(set & 0xcccc)<<1 |
-	 !!(set & 0xf0f0)<<2 |
-	 !!(set & 0xff00)<<3;
+  return (!!(set & 0xaaaa))    |
+         (!!(set & 0xcccc)<<1) |
+	 (!!(set & 0xf0f0)<<2) |
+	 (!!(set & 0xff00)<<3);
 }
 
 /**
