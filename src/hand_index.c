@@ -2,7 +2,6 @@
 #include <math.h>
 #include <stdbool.h>
 #include <stdlib.h>
-#include <stdio.h>
 #include <string.h>
 #include "hand_index.h"
 
