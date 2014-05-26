@@ -141,6 +141,7 @@ void tabulate_configurations(uint_fast32_t round, uint_fast32_t configuration[],
       indexer->configuration_to_suit_size[round][id][i] = indexer->configuration_to_suit_size[round][id-1][i];
     }
     indexer->configuration_to_offset[round][id] = indexer->configuration_to_offset[round][id-1];
+    indexer->configuration_to_equal[round][id]  = indexer->configuration_to_equal[round][id-1];
   }
 out:;
 
