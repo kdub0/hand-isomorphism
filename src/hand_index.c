@@ -423,6 +423,7 @@ hand_index_t hand_index_next_round(const hand_indexer_t * indexer, const uint8_t
     assert(cards[i] < CARDS);                 /* valid card */
 
     uint_fast32_t rank         = deck_get_rank(cards[i]), suit = deck_get_suit(cards[i]), rank_bit = 1<<rank;
+    assert(!(ranks[suit]&rank_bit));
     ranks[suit]               |= rank_bit;
     shifted_ranks[suit]       |= rank_bit>>__builtin_popcount((rank_bit-1)&state->used_ranks[suit]);
   }
