@@ -7,6 +7,7 @@
 #
 
 CFLAGS     ?=-std=c99 -Wall -g -O2
+LDLIBS     ?=-lm
 
 SRC        :=$(addprefix src/,deck.c hand_index.c)
 OBJ        :=$(SRC:.c=.o)
